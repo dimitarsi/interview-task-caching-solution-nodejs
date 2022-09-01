@@ -1,0 +1,47 @@
+services:
+  deployment-01:
+    image: nginx
+    ports:
+      - 8081:80
+    volumes:
+      - ./public/v1:/usr/share/nginx/html
+    networks:
+      - internal
+  deployment-02:
+    image: nginx
+    ports:
+      - 8082:80
+    volumes:
+      - ./public/v2:/usr/share/nginx/html
+    networks:
+      - internal
+  deployment-03:
+    image: nginx
+    ports:
+      - 8083:80
+    volumes:
+      - ./public/v1:/usr/share/nginx/html
+    networks:
+      - internal
+  # This is a fake load balancer that respondse with
+  # a response from a random deployment each time
+  # user makes a request.
+  # The purpose is to simulate a round-robin kind of load balancing
+  load-balancer:
+    ports:
+      - 8080:8080
+    environment:
+      - PORT=8080
+    volumes:
+      - ./container/load-balancer:/app
+    image: node:18.8.0
+    working_dir: /app
+    command: "npm start"
+    depends_on:
+      - deployment-01
+      - deployment-02
+      - deployment-03
+    networks:
+      - internal
+networks:
+  internal:
