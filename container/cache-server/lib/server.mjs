@@ -1,7 +1,7 @@
 import express from "express"
 import { checkCache, clearCache, saveInCache, serveFromCache, cache  } from "./cache.mjs";
 import {CACHE_API_PORT, CACHE_PORT, CACHE_MISS} from "./constants.mjs"
-import {preprocessHTML} from "./processHtml.mjs"
+import {preprocessHTML} from "./processHtml/processHtml.mjs"
 import {getInstanceUrlFromRequest} from "./helper.mjs"
 
 const app = express();
