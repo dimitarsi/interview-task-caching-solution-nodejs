@@ -1,0 +1,16 @@
+{
+  "name": "cache-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon --inspect ./lib/server.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19"
+  }
+}
