@@ -1,43 +1,46 @@
-import {jest} from '@jest/globals';
-import { preprocessHtml, filterKnownUrls, restoreResourceMap } from "../preprocessHtml.mjs";
-import module from "../getBody.mjs"
-import {stripWhitespaces} from '../helpers/stripWhitespaces.mjs'
+import { jest } from "@jest/globals";
+import {
+  preprocessHtml,
+  filterKnownUrls,
+  restoreResourceMap,
+} from "../preprocessHtml.mjs";
+import module from "../getBody.mjs";
+import { stripWhitespaces } from "../helpers/stripWhitespaces.mjs";
 
-jest.spyOn(module, "getBody").mockImplementation((url) => `/* CSS - ${url.includes('main.css') ? 'main' : 'style'} */`)
+jest
+  .spyOn(module, "getBody")
+  .mockImplementation(
+    (url) => `/* CSS - ${url.includes("main.css") ? "main" : "style"} */`
+  );
 
-const CACHED_INSTANCE = 'http://load-balancer:8080'
-const known = [`${CACHED_INSTANCE}/main.js`, `${CACHED_INSTANCE}/main.css`]
+const CACHED_INSTANCE = "http://load-balancer:8080";
+const known = [`${CACHED_INSTANCE}/main.js`, `${CACHED_INSTANCE}/main.css`];
 
 describe("Preprocessing HTML", () => {
+  beforeEach(() => {
+    restoreResourceMap();
+  });
 
-    beforeEach(() => {
-        restoreResourceMap()
-    })
+  test("getBody is mocked", async () => {
+    console.log(module.getBody + "");
+    let res = await module.getBody("/main.css");
+    expect(res).toEqual(`/* CSS - main */`);
+    res = await module.getBody("/style.css");
+    expect(res).toEqual(`/* CSS - style */`);
+  });
 
-    test("getBody is mocked", async () => {
-        console.log(module.getBody+"")
-        let res = await module.getBody('/main.css') 
-        expect(res).toEqual(`/* CSS - main */`)
-        res = await module.getBody('/style.css')
-        expect(res).toEqual(`/* CSS - style */`) 
-    })
+  test("Filter known URL", () => {
+    const newHrefs = ["/main.js", "/main.css", "/style.css"];
+    expect(filterKnownUrls(known, newHrefs)).toEqual([
+      {
+        original: "/style.css",
+        url: new URL("http://load-balancer:8080/style.css"),
+      },
+    ]);
+  });
 
-    test("Filter known URL", () => {
-        const newHrefs = [
-            '/main.js',
-            '/main.css',
-            '/style.css'
-        ];
-        expect(filterKnownUrls(known, newHrefs)).toEqual([
-            {
-                original: '/style.css',
-                url: new URL('http://load-balancer:8080/style.css')
-            }
-        ])
-    })
-
-    test("Resolves unknown urls", async () => {
-        const html = `
+  test("Resolves unknown urls", async () => {
+    const html = `
             <!html>
                 <head>
                     <link href='/assets/main.css' rel="stylesheet" />"
@@ -47,9 +50,10 @@ describe("Preprocessing HTML", () => {
                 </body>
             </html>
         `;
-        const result = await preprocessHtml(html)
+    const result = await preprocessHtml(html);
 
-        expect(stripWhitespaces(result)).toEqual(stripWhitespaces(`
+    expect(stripWhitespaces(result)).toEqual(
+      stripWhitespaces(`
         <!html>
             <head>
                 <link href='/assets/main.css' rel="stylesheet" />"
@@ -58,12 +62,12 @@ describe("Preprocessing HTML", () => {
             <body>
             </body>
         </html>
-        `))
-    })
+        `)
+    );
+  });
 
-
-    test("Resolves the same URL across different pages", async () => {
-        const pageA = `
+  test("Resolves the same URL across different pages", async () => {
+    const pageA = `
             <!html>
                 <head>
                     <link href='/assets/main.css?v=123456' rel="stylesheet" />"
@@ -74,7 +78,7 @@ describe("Preprocessing HTML", () => {
                 </body>
             </html>
         `;
-        const pageB = `
+    const pageB = `
             <!html>
                 <head>
                     <link href='/assets/main.css?v=789' rel="stylesheet" />"
@@ -86,10 +90,11 @@ describe("Preprocessing HTML", () => {
             </html>
         `;
 
-        await preprocessHtml(pageA)
-        const resultB = await preprocessHtml(pageB)
-        
-        expect(stripWhitespaces(resultB)).toEqual(stripWhitespaces(`
+    await preprocessHtml(pageA);
+    const resultB = await preprocessHtml(pageB);
+
+    expect(stripWhitespaces(resultB)).toEqual(
+      stripWhitespaces(`
         <!html>
             <head>
                 <link href='/assets/main.css?v=123456' rel="stylesheet" />"
@@ -99,6 +104,7 @@ describe("Preprocessing HTML", () => {
                 <h1>Page B</h1>
             </body>
         </html>
-        `))
-    })
-})
+        `)
+    );
+  });
+});

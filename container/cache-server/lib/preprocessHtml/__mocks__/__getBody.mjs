@@ -1,1 +1,1 @@
-export const getBody = jest.fn().mockImplementation(() => `/* CSS */`)
+export const getBody = jest.fn().mockImplementation(() => `/* CSS */`);

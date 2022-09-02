@@ -1,1 +1,1 @@
-export const stripWhitespaces = (str) => str.replace(/\s{2,}/g, '')
+export const stripWhitespaces = (str) => str.replace(/\s{2,}/g, "");

@@ -1,9 +1,9 @@
-import { extractLinks, extractHrefAttributes } from "./extractLinks.mjs"
-import {extractScripts, extractSrcAttributes} from "./extractScripts.mjs"
-import crypto from "crypto"
-import m from "./getBody.mjs"
+import { extractLinks, extractHrefAttributes } from "./extractLinks.mjs";
+import { extractScripts, extractSrcAttributes } from "./extractScripts.mjs";
+import crypto from "crypto";
+import m from "./getBody.mjs";
 
-const CACHED_INSTANCE = 'http://load-balancer:8080'
+const CACHED_INSTANCE = "http://load-balancer:8080";
 
 /**
  * @Example
@@ -23,58 +23,62 @@ const CACHED_INSTANCE = 'http://load-balancer:8080'
  *     }
  * }
  */
-let resoucesResolutionMap = {}
+let resoucesResolutionMap = {};
 
 export async function preprocessHtml(htmlAsString) {
-    const linkHref = extractLinks(htmlAsString).map(extractHrefAttributes)
-    const scriptSrc = extractScripts(htmlAsString).map(extractSrcAttributes)
+  const linkHref = extractLinks(htmlAsString).map(extractHrefAttributes);
+  const scriptSrc = extractScripts(htmlAsString).map(extractSrcAttributes);
 
-    const allHref = Object.keys(resoucesResolutionMap)
-    const unknownUrls = filterKnownUrls(allHref, [...linkHref, ...scriptSrc]);
+  const allHref = Object.keys(resoucesResolutionMap);
+  const unknownUrls = filterKnownUrls(allHref, [...linkHref, ...scriptSrc]);
 
-    for(const urlIndex in unknownUrls) {
-        const {original, url} = unknownUrls[urlIndex];
-        const strUrl = url.toString();
-        const body = await m.getBody(strUrl);
-        const bodyHash = crypto.createHash('sha1').update(body).digest('hex')
-        
-        const entryWithSameBody = Object.values(resoucesResolutionMap).find(entry => {
-            return entry.bodyHash === bodyHash
-        })
+  for (const urlIndex in unknownUrls) {
+    const { original, url } = unknownUrls[urlIndex];
+    const strUrl = url.toString();
+    const body = await m.getBody(strUrl);
+    const bodyHash = crypto.createHash("sha1").update(body).digest("hex");
 
-        resoucesResolutionMap[strUrl] = {
-            original,
-            url: strUrl,
-            bodyHash: bodyHash,
-            replaceWith: entryWithSameBody ? entryWithSameBody.replaceWith ||  entryWithSameBody.original : original
-        }
+    const entryWithSameBody = Object.values(resoucesResolutionMap).find(
+      (entry) => {
+        return entry.bodyHash === bodyHash;
+      }
+    );
+
+    resoucesResolutionMap[strUrl] = {
+      original,
+      url: strUrl,
+      bodyHash: bodyHash,
+      replaceWith: entryWithSameBody
+        ? entryWithSameBody.replaceWith || entryWithSameBody.original
+        : original,
+    };
+  }
+
+  const allEntries = Object.values(resoucesResolutionMap);
+  allEntries.forEach((entry) => {
+    if (entry.replaceWith) {
+      htmlAsString = htmlAsString
+        .replaceAll(`"${entry.original}"`, `"${entry.replaceWith}"`)
+        .replaceAll(`'${entry.original}'`, `'${entry.replaceWith}'`);
     }
+  });
 
-    const allEntries = Object.values(resoucesResolutionMap);
-    allEntries.forEach(entry => {
-        if(entry.replaceWith) {
-            htmlAsString = htmlAsString.replaceAll(`"${entry.original}"`, `"${entry.replaceWith}"`)
-                                       .replaceAll(`'${entry.original}'`, `'${entry.replaceWith}'`)
-        }
-    })
-
-    return htmlAsString;
+  return htmlAsString;
 }
 
 export function filterKnownUrls(allHrefs, newHrefs) {
-    const filtered = newHrefs.map(relLink => {
-        return {
-            original: relLink,
-            url: new URL(relLink, CACHED_INSTANCE)
-        }
-    }).filter(
-        entry => !allHrefs.includes(entry.url.href)
-    )
+  const filtered = newHrefs
+    .map((relLink) => {
+      return {
+        original: relLink,
+        url: new URL(relLink, CACHED_INSTANCE),
+      };
+    })
+    .filter((entry) => !allHrefs.includes(entry.url.href));
 
-    return filtered;
+  return filtered;
 }
 
-
 export function restoreResourceMap() {
-    resoucesResolutionMap = {}
+  resoucesResolutionMap = {};
 }
