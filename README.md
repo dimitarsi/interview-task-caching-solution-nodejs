@@ -19,7 +19,7 @@ Assumptions:
 
 # Solution
 
-The [preprocessHtml function](container\cache-server\lib\preprocessHtml\preprocessHtml.mjs) generates a resource map,
+The [preprocessHtml function](https://github.com/dimitarsi/interview-task-caching-solution-nodejs/blob/master/container/cache-server/lib/preprocessHtml/preprocessHtml.mjs) generates a resource map,
 storing metadata about the request with the following structure:
 
 ```
@@ -45,12 +45,12 @@ Description of the fields:
  - `bodyHash` - sha1 hash of the request body
  - `replaceWith` - determines how we should overwrite the `original` url
 
-Refer to the test cases of what the final output of the cache server should be - [preprocessHtml.test.mjs](container\cache-server\lib\preprocessHtml\__tests__\preprocessHtml.test.mjs)
+Refer to the test cases of what the final output of the cache server should be - [preprocessHtml.test.mjs](https://github.com/dimitarsi/interview-task-caching-solution-nodejs/blob/master/container/cache-server/lib/preprocessHtml/__tests__/preprocessHtml.test.mjs)
 
 # Extra
 
 The source code extends to a naive and oversimplified version of:
-- [cache server](container\cache-server\lib\server.mjs) - handles the cache in memory and starts a subprocess of the `preprocessHtml`.
+- [cache server](https://github.com/dimitarsi/interview-task-caching-solution-nodejs/blob/master/container/cache-server/lib/server.mjs) - handles the cache in memory and starts a subprocess of the `preprocessHtml`.
     - Cache server is accessible with default port `80` outside the docker container
     - Cache server also exposes `2 routes`:
         - cache inspection: [http://localhost:81]
