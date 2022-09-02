@@ -5,6 +5,7 @@ services:
       - 8081:80
     volumes:
       - ./public/v1:/usr/share/nginx/html
+      - ./public/assets:/usr/share/nginx/html/assets
     networks:
       - internal
   deployment-02:
@@ -13,6 +14,7 @@ services:
       - 8082:80
     volumes:
       - ./public/v2:/usr/share/nginx/html
+      - ./public/assets:/usr/share/nginx/html/assets
     networks:
       - internal
   deployment-03:
@@ -20,7 +22,8 @@ services:
     ports:
       - 8083:80
     volumes:
-      - ./public/v1:/usr/share/nginx/html
+      - ./public/v3:/usr/share/nginx/html
+      - ./public/assets:/usr/share/nginx/html/assets
     networks:
       - internal
   # This is a fake load balancer that respondse with
@@ -49,6 +52,7 @@ services:
       - 81:8888
     environment:
       - PORT=7777
+      - CACHE_API_PORT=8888
     volumes:
       - ./container/cache-server:/app
     image: node:18.8.0
