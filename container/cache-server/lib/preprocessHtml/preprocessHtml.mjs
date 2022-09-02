@@ -56,11 +56,9 @@ export async function preprocessHtml(htmlAsString) {
 
   const allEntries = Object.values(resoucesResolutionMap);
   allEntries.forEach((entry) => {
-    if (entry.replaceWith) {
       htmlAsString = htmlAsString
         .replaceAll(`"${entry.original}"`, `"${entry.replaceWith}"`)
         .replaceAll(`'${entry.original}'`, `'${entry.replaceWith}'`);
-    }
   });
 
   return htmlAsString;
