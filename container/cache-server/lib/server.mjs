@@ -1,7 +1,6 @@
 import express from "express"
 import { checkCache, clearCache, saveInCache, serveFromCache, cache  } from "./cache.mjs";
 import {CACHE_API_PORT, CACHE_PORT, CACHE_MISS} from "./constants.mjs"
-import {preprocessHTML} from "./processHtml/processHtml.mjs"
 import {getInstanceUrlFromRequest} from "./helper.mjs"
 
 const app = express();
@@ -18,15 +17,9 @@ app.use("*", (req, res, next) => {
 
 app.all("*", async (req, res) => {
     const url = getInstanceUrlFromRequest(req);
-
     const response = await fetch(url);
 
-    // Process the css and js as well?
-    if(response.headers['content-type']?.include('text/html')) {
-        res.send(preprocessHTML(await response.text()))
-    } else {
-        res.send(await response.text())
-    }
+    res.send(await response.text())
 })
 
 app.listen(CACHE_PORT, () => {
