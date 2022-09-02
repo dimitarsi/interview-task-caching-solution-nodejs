@@ -52,8 +52,8 @@ describe("Preprocessing HTML", () => {
         expect(stripWhitespaces(result)).toEqual(stripWhitespaces(`
         <!html>
             <head>
-                <link href='http://load-balancer:8080/assets/main.css' rel="stylesheet" />"
-                <link href="http://load-balancer:8080/assets/style.css" rel="stylesheet" />"
+                <link href='/assets/main.css' rel="stylesheet" />"
+                <link href="/assets/style.css" rel="stylesheet" />"
             </head>
             <body>
             </body>
@@ -92,8 +92,8 @@ describe("Preprocessing HTML", () => {
         expect(stripWhitespaces(resultB)).toEqual(stripWhitespaces(`
         <!html>
             <head>
-                <link href='http://load-balancer:8080/assets/main.css?v=123456' rel="stylesheet" />"
-                <link href="http://load-balancer:8080/assets/style.css?v=123456" rel="stylesheet" />"
+                <link href='/assets/main.css?v=123456' rel="stylesheet" />"
+                <link href="/assets/style.css?v=123456" rel="stylesheet" />"
             </head>
             <body>
                 <h1>Page B</h1>

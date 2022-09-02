@@ -43,10 +43,10 @@ export async function preprocessHtml(htmlAsString) {
         })
 
         resoucesResolutionMap[strUrl] = {
+            original,
             url: strUrl,
             bodyHash: bodyHash,
-            original,
-            replaceWith: entryWithSameBody ? entryWithSameBody.replaceWith ||  entryWithSameBody.url : strUrl
+            replaceWith: entryWithSameBody ? entryWithSameBody.replaceWith ||  entryWithSameBody.original : original
         }
     }
 
