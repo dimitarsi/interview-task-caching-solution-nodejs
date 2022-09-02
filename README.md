@@ -1,8 +1,10 @@
 # Interview task
 
+You can find the solution of the task in [preprocessHtml.mjs](https://github.com/dimitarsi/interview-task-caching-solution-nodejs/blob/master/container/cache-server/lib/preprocessHtml/preprocessHtml.mjs#L28)
+
 TLDR: The task consists of implementing a `preprocessHtml` function that takes care of normalizing the cache server entry.
 
-The problem at hand is: having a multi-instance application pointing to the same resource (css, js), but each instance uses
+The problem at hand is: having a multi-instance application pointing to the same resources (css, js), but each instance uses
 a different cache buster. We need to eliminate the performance issue of having each instance requesting the resources with a unique key.
 
 Limitations:
@@ -28,13 +30,13 @@ storing metadata about the request with the following structure:
         'original': '/main.css?v=1234',
         'url': 'http://load-balancer:8080/main.css?v=1234',
         'bodyHash': 'f72017485fbf6423499baf9b240daa14f5f095a1',
-        'replaceWith': null,
+        'replaceWith': '/main.css?v=1234',
     },
     'http://load-balancer:8080/main.css?v=7890': {
         'original': '/main.css?v=7890',
         'url': 'http://load-balancer:8080/main.css?v=7890',
         'bodyHash': 'f72017485fbf6423499baf9b240daa14f5f095a1',
-        'replaceWith': 'http://load-balancer:8080/main.css?v=1234',
+        'replaceWith': '/main.css?v=1234',
     }
 }
 ```
@@ -60,5 +62,9 @@ The source code extends to a naive and oversimplified version of:
 - public folder served by three nginx containers, each has a unique `index.html` and `about.html` files,
       share the same `assets` folder
 
+# How to run
+
 The repo is meant to be run in a [remote container](https://code.visualstudio.com/docs/remote/containers) or by running the
 command `docker-compose up --build -d` in a terminal.
+
+Once you start the remote container you can either run `"Run npm start"` from `Debug and Run` sidebar or execute `npm start` in the terminal.

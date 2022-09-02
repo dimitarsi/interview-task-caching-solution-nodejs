@@ -26,10 +26,9 @@ services:
       - ./public/assets:/usr/share/nginx/html/assets
     networks:
       - internal
-  # This is a fake load balancer that respondse with
-  # a response from a random deployment each time
-  # user makes a request.
-  # The purpose is to simulate a round-robin kind of load balancing
+  # This is a fake load balancer that returns a random response
+  # from a server application each time a user makes a request
+  # The purpose is to simulate a sticky load balancing
   load-balancer:
     ports:
       - 8080:8080
