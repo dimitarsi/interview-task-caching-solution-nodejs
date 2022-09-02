@@ -28,6 +28,7 @@ app.get("*", async (req, res) => {
     res.cookie(LB_AFFINITY, index, {expires: new Date(Date.now() + 500), httpOnly: true})
 
     http.get(url, proxyReq => {
+        res.setHeader('content-type', proxyReq.headers['content-type']);
         proxyReq.pipe(res)
     })
 
