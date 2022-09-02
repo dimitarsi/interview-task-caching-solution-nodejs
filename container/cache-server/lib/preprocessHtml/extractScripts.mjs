@@ -1,6 +1,6 @@
 export function extractScripts(htmlAsString) {
     const result = htmlAsString.match(/(<script .+?>)/g)
-    return result;
+    return result || [];
 }
 
 export function extractSrcAttributes(scriptAsHtml) {
@@ -10,7 +10,7 @@ export function extractSrcAttributes(scriptAsHtml) {
         .map(attr => attr.replace(/src=["']/, '')
                         .replace(/["']$/, ''))
 
-    return result.length ? result[0] : null;
+    return result.length && result[0] ? result[0] : [];
 }
 
 function identity(arg) {

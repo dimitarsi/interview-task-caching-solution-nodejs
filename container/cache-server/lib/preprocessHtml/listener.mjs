@@ -1,8 +1,8 @@
 import {preprocessHtml} from "./preprocessHtml.mjs"
 
-process.on("message", ({html, uuid}) =>{ 
+process.on("message", async ({html, uuid}) =>{ 
     process.send({
-        html: preprocessHtml(html),
+        html: await preprocessHtml(html),
         uuid
     })
 })

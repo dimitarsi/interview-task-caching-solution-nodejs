@@ -24,11 +24,12 @@ export function expensivePreprocessHtml(htmlAsString) {
     }
 
     return new Promise((resolve, rej) => {
-
         const checkResponse = () => {
             const response = waitForResponse()
             if(response) {
                 resolve(response)
+                workerResponses[uuid] = null;
+                delete workerResponses[uuid];
             } else {
                 setTimeout(checkResponse, 100)
             }

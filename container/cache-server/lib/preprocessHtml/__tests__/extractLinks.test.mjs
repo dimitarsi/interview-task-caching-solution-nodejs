@@ -1,4 +1,4 @@
-import {extractAttributes, extractLinks} from "../extractLinks.mjs"
+import {extractHrefAttributes, extractLinks} from "../extractLinks.mjs"
 
 const htmlWithLinks = `
     <!html>
@@ -20,6 +20,6 @@ describe("Parsing HTML to extract <link /> tags", () => {
     })
     
     test("Finds all attributes for links", () => {
-        expect(extractAttributes('<link rel="stylesheet" href="/css/main.css?v=1646807089238" />')).toEqual("/css/main.css?v=1646807089238")
+        expect(extractHrefAttributes('<link rel="stylesheet" href="/css/main.css?v=1646807089238" />')).toEqual("/css/main.css?v=1646807089238")
     })
 })
