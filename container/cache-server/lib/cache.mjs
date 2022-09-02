@@ -54,6 +54,7 @@ function isHeaderAllowed() {
     return true;
 }
 
+// Workaround since the LB is not sending back the content-type!
 function inferContentTypeFormUrl(urlAsString) {
     const url = new URL(urlAsString);
     if(url.pathname.match(/\.css$/)) {
